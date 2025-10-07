@@ -6181,7 +6181,7 @@ function flipRevealRow(rowIndex) {
 
       // Lock the row's letters to match the used word (so grid matches what you typed in game)
       setRowWord(currentRow, used);
-
+      await flipRevealRow(currentRow);
       // Gather pattern from clicked tiles
       const pattern = currentPattern(); // "B/Y/G" x 5
 
