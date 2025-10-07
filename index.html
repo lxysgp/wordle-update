@@ -48,6 +48,20 @@
     .tile.Y{ background:var(--yellow); }
     .tile.G{ background:var(--green); }
     .tile.locked{ cursor:default; filter:grayscale(.3); opacity:.9 }
+    /* Add 3D perspective to each row so flips look like Wordle */
+.row { perspective: 900px; }
+
+/* Smooth flip animation */
+.tile {
+  transition: transform 0.18s ease, background 0.2s ease, border-color 0.2s ease;
+  transform-origin: center center;
+  transform-style: preserve-3d;
+}
+
+/* Halfway flip (rotate to 90deg), we’ll swap the color mid-flip in JS */
+.tile.flip {
+  transform: rotateX(90deg);
+}
 
     .controls{
       display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0 4px;
