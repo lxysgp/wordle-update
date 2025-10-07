@@ -6053,6 +6053,40 @@ pupal
         boardDiv.appendChild(rowDiv);
       }
     }
+    // Reveal the colors on the current row with a Wordle-style flip (staggered)
+function flipRevealRow(rowIndex) {
+  return new Promise((resolve) => {
+    const STAGGER = 180;   // ms between tiles
+    const MID = 140;       // ms to hit 90° flip before swapping color
+    let finished = 0;
+
+    for (let i = 0; i < COLS; i++) {
+      const tile = boardDiv.querySelector(`.tile[data-row="${rowIndex}"][data-col="${i}"]`);
+      const targetColor = board[rowIndex].colors[i]; // "B" | "Y" | "G"
+
+      // stagger each tile
+      setTimeout(() => {
+        if (!tile) return;
+
+        // 1) rotate to 90°
+        tile.classList.add("flip");
+
+        // 2) swap the color mid-flip
+        setTimeout(() => {
+          // clean up any old color classes, then set the final one
+          tile.classList.remove("B","Y","G");
+          tile.classList.add(targetColor);
+
+          // 3) rotate back to 0°
+          tile.classList.remove("flip");
+
+          finished++;
+          if (finished === COLS) resolve();
+        }, MID);
+      }, i * STAGGER);
+    }
+  });
+}
 
     function nextColor(x){ return x==="B" ? "Y" : x==="Y" ? "G" : "B"; }
 
