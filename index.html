@@ -48,20 +48,6 @@
     .tile.Y{ background:var(--yellow); }
     .tile.G{ background:var(--green); }
     .tile.locked{ cursor:default; filter:grayscale(.3); opacity:.9 }
-    /* Add 3D perspective to each row so flips look like Wordle */
-.row { perspective: 900px; }
-
-/* Smooth flip animation */
-.tile {
-  transition: transform 0.18s ease, background 0.2s ease, border-color 0.2s ease;
-  transform-origin: center center;
-  transform-style: preserve-3d;
-}
-
-/* Halfway flip (rotate to 90deg), we’ll swap the color mid-flip in JS */
-.tile.flip {
-  transform: rotateX(90deg);
-}
 
     .controls{
       display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0 4px;
@@ -6053,40 +6039,6 @@ pupal
         boardDiv.appendChild(rowDiv);
       }
     }
-    // Reveal the colors on the current row with a Wordle-style flip (staggered)
-function flipRevealRow(rowIndex) {
-  return new Promise((resolve) => {
-    const STAGGER = 180;   // ms between tiles
-    const MID = 140;       // ms to hit 90° flip before swapping color
-    let finished = 0;
-
-    for (let i = 0; i < COLS; i++) {
-      const tile = boardDiv.querySelector(`.tile[data-row="${rowIndex}"][data-col="${i}"]`);
-      const targetColor = board[rowIndex].colors[i]; // "B" | "Y" | "G"
-
-      // stagger each tile
-      setTimeout(() => {
-        if (!tile) return;
-
-        // 1) rotate to 90°
-        tile.classList.add("flip");
-
-        // 2) swap the color mid-flip
-        setTimeout(() => {
-          // clean up any old color classes, then set the final one
-          tile.classList.remove("B","Y","G");
-          tile.classList.add(targetColor);
-
-          // 3) rotate back to 0°
-          tile.classList.remove("flip");
-
-          finished++;
-          if (finished === COLS) resolve();
-        }, MID);
-      }, i * STAGGER);
-    }
-  });
-}
 
     function nextColor(x){ return x==="B" ? "Y" : x==="Y" ? "G" : "B"; }
 
@@ -6168,8 +6120,7 @@ function flipRevealRow(rowIndex) {
       updateTopTable([]); updateStats([]);
     }
 
-    async function evaluateStep() {
-
+    function evaluateStep(){
       if(solved) return;
 
       // Determine which guess was actually used for current row
@@ -6181,7 +6132,7 @@ function flipRevealRow(rowIndex) {
 
       // Lock the row's letters to match the used word (so grid matches what you typed in game)
       setRowWord(currentRow, used);
-      await flipRevealRow(currentRow);
+
       // Gather pattern from clicked tiles
       const pattern = currentPattern(); // "B/Y/G" x 5
 
