@@ -6168,7 +6168,8 @@ function flipRevealRow(rowIndex) {
       updateTopTable([]); updateStats([]);
     }
 
-    function evaluateStep(){
+    async function evaluateStep() {
+
       if(solved) return;
 
       // Determine which guess was actually used for current row
